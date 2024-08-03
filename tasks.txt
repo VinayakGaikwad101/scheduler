@@ -1,0 +1,5 @@
+Tasks = [✗ = not done, ✓ = task done, ... = task in progress]
+
+[✓] Static Table component
+[✓] Navbar Component
+[✓] Frontend Routing
