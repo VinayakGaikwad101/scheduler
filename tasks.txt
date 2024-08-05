@@ -1,5 +1,10 @@
 Tasks = [✗ = not done, ✓ = task done, ... = task in progress]
 
-[✓] Static Table component
-[✓] Navbar Component
-[✓] Frontend Routing
+[✓] Static Table component -> 03/08/2024
+[✓] Non-Logged User Navbar Component -> 03/08/2024
+[✓] Frontend Routing -> 03/08/2024
+[✓] Server Setup -> 04/08/2024
+[✓] Login API -> 05/08/2024
+[✓] Login Validation -> 05/08/2024
+[✓] Sign Up API -> 05/08/2024
+[✓] Sign Up Validation -> 05/08/2024
