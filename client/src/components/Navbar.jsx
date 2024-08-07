@@ -12,7 +12,14 @@ const Navbar = () => {
   return (
     <nav className="bg-blue-500 p-4">
       <div className="flex items-center justify-between">
-        <div className="text-white text-2xl font-bold">Logo Text</div>
+        <div className="flex items-center">
+          <img
+            src="https://r2.erweima.ai/imgcompressed/compressed_faba31e3cd615198449e6fdf2d4800e0.webp"
+            alt="Logo"
+            className="h-10 rounded-lg"
+          />
+          <span className="ml-2 text-white font-bold text-3xl">Scheduler</span>
+        </div>
         <div className="md:hidden">
           <button className="text-white" onClick={toggleMenu}>
             <svg
