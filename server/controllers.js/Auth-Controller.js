@@ -1,9 +1,25 @@
 import User from "../models/User-Model.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const signup = async (req, res) => {
   try {
     const { fullName, email, password, registrationNumber } = req.body;
+
+    if (!fullName || !email || !password || !registrationNumber) {
+      return res.status(400).json({
+        message: "Please fill full form",
+        success: false,
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        message: "Password should be at least 6 characters long",
+        success: false,
+      });
+    }
+
     const user = await User.findOne({ email, registrationNumber });
     if (user) {
       return res
@@ -36,11 +52,26 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password, registrationNumber } = req.body;
+    if (!email || !password || !registrationNumber) {
+      return res.status(400).json({
+        message: "Please fill full form",
+        success: false,
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        message: "Password should be at least 6 characters long",
+        success: false,
+      });
+    }
+
     const user = await User.findOne({ email, registrationNumber });
     if (!user) {
-      return res
-        .status(400)
-        .json({ message: "User not found", success: false });
+      return res.status(400).json({
+        message: "User not found, please check the credentials",
+        success: false,
+      });
     }
     const isPasswordValid = await bcrypt.compare(
       password,
@@ -48,12 +79,31 @@ const login = async (req, res) => {
     );
 
     if (!user || !isPasswordValid) {
-      return res
-        .status(400)
-        .json({ message: "Invalid credentials", success: false });
+      return res.status(400).json({
+        message: "User not found, please check the credentials",
+        success: false,
+      });
     }
 
-    return res.status(200).json({ message: "User logged in", success: true });
+    const jwtToken = jwt.sign(
+      {
+        email: user.email,
+        _id: user._id,
+        registrationNumber: user.registrationNumber,
+      },
+      process.env.JWT_SECRET,
+      // token expires 24h after login
+      { expiresIn: "24h" }
+    );
+
+    return res.status(200).json({
+      message: "User logged in",
+      success: true,
+      userToken: jwtToken,
+      name: user.fullName,
+      registrationNumber: user.registrationNumber,
+      email: user.email,
+    });
   } catch (error) {
     return res
       .status(500)

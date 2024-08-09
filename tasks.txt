@@ -8,3 +8,10 @@ Tasks = [✗ = not done, ✓ = task done, ... = task in progress]
 [✓] Login Validation -> 05/08/2024
 [✓] Sign Up API -> 05/08/2024
 [✓] Sign Up Validation -> 05/08/2024
+[✓] Login Page -> 07/08/2024
+[✓] Sign Up Page -> 07/08/2024
+[✓] Complete Login Functionality -> 08/08/2024
+[✓] Complete Sign Up Functionality -> 08/08/2024
+[✓] Complete Logout Functionality -> 08/08/2024
+[✓] Backend Route Protection -> 08/08/2024
+[...] Frontend Route Protection -> /08/2024

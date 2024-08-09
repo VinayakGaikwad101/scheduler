@@ -4,6 +4,7 @@ import connectToMongoDB from "./db-connect.js";
 import bodyParser from "body-parser";
 import cors from "cors";
 import router from "./routes/Auth-Router.js";
+import test_router from "./routes/Product-Router.js";
 
 dotenv.config();
 
@@ -19,6 +20,9 @@ app.get("/", (req, res) => {
 app.use(bodyParser.json());
 app.use(cors());
 app.use("/auth", router);
+
+// authenticated route
+app.use("/products", test_router);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
