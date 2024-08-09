@@ -48,24 +48,13 @@ const Profile = () => {
     }
   }, [loggedUserToken]);
 
-  const handleLogOut = (e) => {
-    localStorage.removeItem("loggedUserName");
-    localStorage.removeItem("loggedUserEmail");
-    localStorage.removeItem("loggedUserRegistrationNumber");
-    localStorage.removeItem("loggedUserToken");
-    handleSuccess("User logged out successfully");
-    setTimeout(() => {
-      navigate("/");
-    }, 1000);
-  };
-
   return (
     <div>
       <div>hey user: {loggedUserName}</div>
       <div>your email is: {loggedUserEmail}</div>
       <div>your registrationNumber is: {loggedUserRegistrationNumber}</div>
       <div>your login token: {loggedUserToken}</div>
-      <button onClick={handleLogOut}>Logout</button>
+
       {/* <div>
         {products &&
           products.map((product) => (
