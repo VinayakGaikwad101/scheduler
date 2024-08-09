@@ -53,9 +53,9 @@ const App = () => {
       path: "/profile",
       element: (
         <ProtectRoutes>
-          <ToastContainer />
           <LoggedNavbar />
           <Profile />
+          <ToastContainer />
         </ProtectRoutes>
       ),
     },
