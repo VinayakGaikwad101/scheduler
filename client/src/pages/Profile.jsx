@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { handleError, handleSuccess } from "../utils/Toast";
+import { handleError } from "../utils/Toast";
 import { ToastContainer } from "react-toastify";
 
 const Profile = () => {
-  const navigate = useNavigate();
   const [products, setProducts] = useState("");
   const [loggedUserToken, setLoggedUserToken] = useState("");
   const [loggedUserName, setLoggedUserName] = useState("");

@@ -10,6 +10,8 @@ import ProtectRoutes from "./utils/ProtectRoutes";
 import PublicRoutes from "./utils/PublicRoutes";
 import LoggedNavbar from "./components/LoggedNavbar";
 import { ToastContainer } from "react-toastify";
+import TimeTableEdit from "./pages/TimeTableEdit";
+import TimeTable from "./pages/TimeTable";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -55,6 +57,26 @@ const App = () => {
         <ProtectRoutes>
           <LoggedNavbar />
           <Profile />
+          <ToastContainer />
+        </ProtectRoutes>
+      ),
+    },
+    {
+      path: "/timetable",
+      element: (
+        <ProtectRoutes>
+          <LoggedNavbar />
+          <TimeTable />
+          <ToastContainer />
+        </ProtectRoutes>
+      ),
+    },
+    {
+      path: "/edit-timetable",
+      element: (
+        <ProtectRoutes>
+          <LoggedNavbar />
+          <TimeTableEdit />
           <ToastContainer />
         </ProtectRoutes>
       ),

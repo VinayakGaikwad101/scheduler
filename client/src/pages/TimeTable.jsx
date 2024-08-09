@@ -1,4 +1,5 @@
 import React from "react";
+import { ToastContainer } from "react-toastify";
 
 export default function App() {
   return (
@@ -298,6 +299,8 @@ export default function App() {
           </div>
         </div>
       </div>
+
+      <ToastContainer />
     </div>
   );
 }
