@@ -92,4 +92,24 @@ const manageTimeTable = async (req, res) => {
   }
 };
 
-export { manageTimeTable };
+const getTimetable = async (req, res) => {
+  try {
+    const { registrationNumber } = req.body;
+
+    const timetable = await Timetable.findOne({ registrationNumber });
+
+    if (!timetable) {
+      return res
+        .status(404)
+        .json({ message: "Timetable not found", success: false });
+    }
+
+    return res.status(200).json({ timetable, success: true });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error in get timetable api", success: false });
+  }
+};
+
+export { manageTimeTable, getTimetable };
