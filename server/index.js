@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import router from "./routes/Auth-Router.js";
 import test_router from "./routes/Product-Router.js";
+import timetable_router from "./routes/Timetable-Router.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use("/auth", router);
 
 // authenticated route
 app.use("/products", test_router);
+app.use("/user", timetable_router);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
