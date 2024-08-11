@@ -15,4 +15,5 @@ Tasks = [✗ = not done, ✓ = task done, ... = task in progress]
 [✓] Complete Logout Functionality -> 08/08/2024
 [✓] Backend Route Protection -> 08/08/2024
 [✓] Frontend Route Protection -> 09/08/2024
-[✓] Timetable create/edit api -> 11/08/2024
+[✓] Timetable create/edit API -> 11/08/2024
+[✓] Get timetable API -> 11/08/2024
