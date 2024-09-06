@@ -6,7 +6,7 @@ import {
 
 const user_router = express.Router();
 
-user_router.get("/getProfile", getProfile);
+user_router.post("/getProfile", getProfile);
 
 user_router.put("/manageProfile", manageProfile);
 

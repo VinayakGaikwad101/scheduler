@@ -1,306 +1,156 @@
-import React from "react";
-import { ToastContainer } from "react-toastify";
+import React, { useEffect, useState, useRef } from "react";
+import PrintPage from "../components/PrintPage";
 
 export default function App() {
+  const [data, setData] = useState(null);
+  const componentRef = useRef();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const registrationNumber = localStorage.getItem(
+        "loggedUserRegistrationNumber"
+      );
+      const url = "http://localhost:8000/user/fetch_timetable";
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ registrationNumber: registrationNumber }),
+        });
+        const result = await response.json();
+        setData(result.timetable);
+        console.log(result.timetable);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const getUniqueTimeSlots = (schedule) => {
+    const uniqueTimeSlots = new Set();
+    schedule.forEach((day) => {
+      day.lectures.forEach((lecture) => {
+        uniqueTimeSlots.add(
+          `${lecture.from}${lecture.fromTimeZone}-${lecture.to}${lecture.toTimeZone}`
+        );
+      });
+    });
+    return Array.from(uniqueTimeSlots);
+  };
+
+  const parseTimeSlot = (timeSlot) => {
+    const parts = timeSlot.split("-");
+    const from = parseInt(parts[0].slice(0, -2)); // Extract hour from "10AM"
+    const to = parseInt(parts[1].slice(0, -2)); // Extract hour from "11AM"
+    const fromPeriod = parts[0].slice(-2); // Extract "AM" or "PM"
+    const toPeriod = parts[1].slice(-2); // Extract "AM" or "PM"
+    return { from, to, fromPeriod, toPeriod };
+  };
+
+  const convertTo24HourFormat = (hour, period) => {
+    if (period === "AM" && hour === 12) return 0;
+    if (period === "PM" && hour !== 12) return hour + 12;
+    return hour;
+  };
+
+  const sortTimeSlots = (timeSlots) => {
+    return timeSlots.sort((a, b) => {
+      const { from: fromA, fromPeriod: fromPeriodA } = parseTimeSlot(a);
+      const { from: fromB, fromPeriod: fromPeriodB } = parseTimeSlot(b);
+      const fromA24 = convertTo24HourFormat(fromA, fromPeriodA);
+      const fromB24 = convertTo24HourFormat(fromB, fromPeriodB);
+      return fromA24 - fromB24;
+    });
+  };
+
+  const dayOrder = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+  const sortDays = (schedule) => {
+    return schedule.sort((a, b) => {
+      return dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day);
+    });
+  };
+
+  const renderTimetable = () => {
+    if (!data) {
+      return <div>TimeTable not found</div>;
+    }
+    const { schedule } = data;
+    const sortedSchedule = sortDays(schedule);
+    const uniqueTimeSlots = sortTimeSlots(getUniqueTimeSlots(sortedSchedule));
+    return (
+      <table className="min-w-full border text-white text-center text-sm md:text-lg font-semibold dark:border-black">
+        <thead>
+          <tr>
+            <th
+              scope="col"
+              className="border-r-2 border-b-2 px-6 py-4 dark:border-black bg-black"
+            >
+              Day/Time
+            </th>
+            {uniqueTimeSlots.map((timeSlot) => (
+              <th
+                key={timeSlot}
+                scope="col"
+                className="border-r-2 border-b-2 px-6 py-4 dark:border-black bg-green-800"
+              >
+                {timeSlot}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {sortedSchedule.map((day) => (
+            <tr key={day._id} className="border-b-2 dark:border-black">
+              <td className="whitespace-nowrap border-r-2 border-b-2 px-6 py-4 font-medium dark:border-black bg-blue-900">
+                {day.day}
+              </td>
+              {renderLectureCells(day, uniqueTimeSlots)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
+
+  const renderLectureCells = (day, uniqueTimeSlots) => {
+    return uniqueTimeSlots.map((timeSlot, index) => {
+      const lecture = day.lectures.find(
+        (lecture) =>
+          `${lecture.from}${lecture.fromTimeZone}-${lecture.to}${lecture.toTimeZone}` ===
+          timeSlot
+      );
+      return (
+        <td
+          key={index}
+          className="whitespace-nowrap border-r-2 border-b-2 px-6 py-4 dark:border-black bg-slate-500"
+        >
+          {lecture ? lecture.lectureName : ""}
+        </td>
+      );
+    });
+  };
+
   return (
     <div className="flex flex-col">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-          <div className="overflow-hidden">
-            <table className="min-w-full border text-white  text-center text-sm md:text-lg font-semibold dark:border-neutral-500">
-              <thead className="border-b font-medium dark:border-neutral-500">
-                <tr>
-                  <th
-                    scope="col"
-                    className="border-r px-6 py-4 dark:border-neutral-500 bg-black"
-                  >
-                    Day/Time
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-r px-6 py-4 dark:border-neutral-500 bg-green-800"
-                  >
-                    9AM - 10AM
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-r px-6 py-4 dark:border-neutral-500 bg-green-800"
-                  >
-                    10AM - 11AM
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-r px-6 py-4 dark:border-neutral-500 bg-green-800"
-                  >
-                    11AM - 12PM
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-r px-6 py-4 dark:border-neutral-500 bg-green-800"
-                  >
-                    12PM - 1PM
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-r px-6 py-4 dark:border-neutral-500 bg-green-800"
-                  >
-                    1PM - 2PM
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-r px-6 py-4 dark:border-neutral-500 bg-green-800"
-                  >
-                    2PM - 3PM
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-r px-6 py-4 dark:border-neutral-500 bg-green-800"
-                  >
-                    3PM - 4PM
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-r px-6 py-4 dark:border-neutral-500 bg-green-800"
-                  >
-                    4PM - 5PM
-                  </th>
-                  <th scope="col" className="px-6 py-4 bg-green-800">
-                    5PM - 6:15PM
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b dark:border-neutral-500">
-                  <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500 bg-blue-900">
-                    Monday
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                </tr>
-                <tr className="border-b dark:border-neutral-500">
-                  <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500 bg-blue-900">
-                    Tuesday
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                </tr>
-                <tr className="border-b dark:border-neutral-500">
-                  <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500 bg-blue-900">
-                    Wednesday
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                </tr>
-                <tr className="border-b dark:border-neutral-500">
-                  <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500 bg-blue-900">
-                    Thursday
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                </tr>
-                <tr className="border-b dark:border-neutral-500">
-                  <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500 bg-blue-900">
-                    Friday
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                </tr>
-                <tr className="border-b dark:border-neutral-500">
-                  <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500 bg-blue-900">
-                    Saturday
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                </tr>
-                <tr className="border-b dark:border-neutral-500">
-                  <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500 bg-blue-900">
-                    Sunday
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>{" "}
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                  <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 bg-slate-500">
-                    Larry the Bird
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="overflow-hidden" ref={componentRef}>
+            {renderTimetable()}
           </div>
         </div>
       </div>
-
-      <ToastContainer />
+      <PrintPage componentRef={componentRef} />
     </div>
   );
 }

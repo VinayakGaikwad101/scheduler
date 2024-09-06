@@ -8,5 +8,5 @@ const timetable_router = express.Router();
 
 timetable_router.post("/manage_timetable", manageTimeTable);
 
-timetable_router.get("/fetch_timetable", getTimetable);
+timetable_router.post("/fetch_timetable", getTimetable);
 export default timetable_router;
