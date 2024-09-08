@@ -13,5 +13,5 @@
   .footer {
     background: linear-gradient(to right, #ffffff, #3939e3, #4e4eae, #3e3ed0);
     background-size: 200% 200%;
-    animation: oceanWave 5s linear infinite;
+    animation: oceanWave 4s linear infinite;
   }
