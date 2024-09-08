@@ -3,7 +3,7 @@ import "./Footer.css"; // Make sure to import the CSS file
 
 const Footer = () => {
   return (
-    <footer className="footer text-black py-4 w-full absolute bottom-0 left-0">
+    <footer className="footer text-black py-4 w-full fixed bottom-0 left-0 bg-white">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center space-y-2">
           <p className="text-3xl">Made By:</p>
