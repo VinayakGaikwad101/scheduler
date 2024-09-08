@@ -19,3 +19,5 @@ Tasks = [✗ = not done, ✓ = task done, ... = task in progress]
 [✓] Get timetable API -> 11/08/2024
 [✓] Get profile API -> 14/08/2024
 [✓] Profile edit API -> 14/08/2024
+[✓] Timetable view/print Functionality -> 05/08/2024
+[✓] Footer Component -> 08/08/2024
