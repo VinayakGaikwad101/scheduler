@@ -42,6 +42,7 @@ const About = () => {
               for users to work together on projects and share schedules with
               others.
             </p>
+            <br /> <br /><br />
           </div>
           <Feedback />
         </div>
