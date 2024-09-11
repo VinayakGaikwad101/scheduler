@@ -10,7 +10,7 @@ const DownloadBtn = () => {
     <div className="downloadBtn">
       <a href="#" className="button">
         <div className="button__content">
-          <span className="button__text">Download</span>
+          <span className="button__text">Download User Manual</span>
           <i className="ri-download-cloud-fill button__icon"></i>
           <div className="button__reflection-1"></div>
           <div className="button__reflection-2"></div>

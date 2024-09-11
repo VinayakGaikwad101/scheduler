@@ -83,7 +83,13 @@ export default function App() {
 
   const renderTimetable = () => {
     if (!data) {
-      return <div>TimeTable not found</div>;
+      return (
+        <div className="flex items-center justify-center h-screen">
+          <h1 className="text-4xl font-bold text-gray-800">
+            TimeTable not found
+          </h1>
+        </div>
+      );
     }
     const { schedule } = data;
     const sortedSchedule = sortDays(schedule);

@@ -55,6 +55,11 @@ const LoggedNavbar = () => {
             </Link>
           </li>
           <li>
+            <Link to="/view-profile" className="text-white">
+              View Profile
+            </Link>
+          </li>
+          <li>
             <Link to="/timetable" className="text-white">
               Timetable
             </Link>
@@ -78,6 +83,11 @@ const LoggedNavbar = () => {
           <li className="py-2">
             <Link to="/profile" className="text-white">
               Profile
+            </Link>
+          </li>
+          <li className="py-2">
+            <Link to="/view-profile" className="text-white">
+              View Profile
             </Link>
           </li>
           <li className="py-2">

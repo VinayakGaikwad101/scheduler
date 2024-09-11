@@ -12,6 +12,7 @@ import LoggedNavbar from "./components/LoggedNavbar";
 import { ToastContainer } from "react-toastify";
 import TimeTableEdit from "./pages/TimeTableEdit";
 import TimeTable from "./pages/TimeTable";
+import ViewProfile from "./pages/ViewProfile";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -77,6 +78,16 @@ const App = () => {
         <ProtectRoutes>
           <LoggedNavbar />
           <TimeTableEdit />
+          <ToastContainer />
+        </ProtectRoutes>
+      ),
+    },
+    {
+      path: "/view-profile",
+      element: (
+        <ProtectRoutes>
+          <LoggedNavbar />
+          <ViewProfile />
           <ToastContainer />
         </ProtectRoutes>
       ),

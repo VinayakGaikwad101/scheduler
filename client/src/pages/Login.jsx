@@ -47,7 +47,6 @@ const Login = () => {
           "loggedUserRegistrationNumber",
           registrationNumber
         );
-        console.log(message);
         handleSuccess(message);
         setTimeout(() => {
           navigate("/profile");
