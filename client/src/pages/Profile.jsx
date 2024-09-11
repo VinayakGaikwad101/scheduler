@@ -11,11 +11,6 @@ const Profile = () => {
         const loggedUserRegistrationNumber = localStorage.getItem(
           "loggedUserRegistrationNumber"
         );
-        
-        if (!loggedUserRegistrationNumber) {
-          // Handle case where user is not logged in
-          return;
-        }
 
         const url = "http://localhost:8000/users/getProfile";
         const response = await fetch(url, {
