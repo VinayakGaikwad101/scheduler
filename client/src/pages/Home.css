@@ -1,0 +1,6 @@
+body{
+    background: linear-gradient(to left,  #ed3838, #e4b42f, #4a84ef, #c443c6 );
+    background-size: 200% 200%;
+    animation: oceanWave 4s linear infinite;
+}
+
