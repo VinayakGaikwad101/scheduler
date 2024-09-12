@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { handleError, handleSuccess } from "../utils/Toast";
+import { ToastContainer } from "react-toastify";
 
 const ViewProfile = () => {
   const [data, setData] = useState(null);
@@ -178,6 +179,7 @@ const ViewProfile = () => {
           </p>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

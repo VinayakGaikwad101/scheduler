@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
+import { ToastContainer } from "react-toastify";
+
 import PrintPage from "../components/PrintPage";
 
 export default function App() {
@@ -157,6 +159,7 @@ export default function App() {
         </div>
       </div>
       <PrintPage componentRef={componentRef} />
+      <ToastContainer />
     </div>
   );
 }

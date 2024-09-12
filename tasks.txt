@@ -26,3 +26,8 @@ Tasks = [✗ = not done, ✓ = task done, ... = task in progress]
 [✓] Added View Profile Page -> 11/09/2024
 [✓] Timetable edit page -> 11/09/2024
 [✓] Profile edit Functionality -> 12/09/2024
+
+    // Nodemailer API IDs:
+    // service id = service_5k60a3b
+    // template id = template_n42bzhu
+    // public key = 7s_JI3wNo9C_xQZ7X
