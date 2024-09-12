@@ -195,6 +195,7 @@ const TimeTableEdit = () => {
               onChange={(e) => setFromTimeZone(e.target.value)}
               required
             >
+              <option value="">Select AM / PM</option>
               <option value="AM">AM</option>
               <option value="PM">PM</option>
             </select>
@@ -213,6 +214,7 @@ const TimeTableEdit = () => {
               onChange={(e) => setToTimeZone(e.target.value)}
               required
             >
+              <option value="">Select AM / PM</option>
               <option value="AM">AM</option>
               <option value="PM">PM</option>
             </select>
