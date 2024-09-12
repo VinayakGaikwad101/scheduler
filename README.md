@@ -56,9 +56,9 @@
 
 ### [✓] Feedback form Functionality -> 12/09/2024
 
-### [...] User manual PDF
+### [✓] User manual PDF -> 12/09/2024
 
-### [...] Tutorial Video for scheduler
+### [✓] Tutorial Video for scheduler -> 12/09/2024
 
 ## Dependencies:
 
