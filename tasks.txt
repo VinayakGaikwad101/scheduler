@@ -27,3 +27,6 @@ Tasks = [✗ = not done, ✓ = task done, ... = task in progress]
 [✓] Timetable edit page -> 11/09/2024
 [✓] Profile edit Functionality -> 12/09/2024
 [✓] Feedback form Functionality -> 12/09/2024
+
+[...] User manual PDF
+[...] Tutorial Video for scheduler
