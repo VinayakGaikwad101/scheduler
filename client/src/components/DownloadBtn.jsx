@@ -1,4 +1,5 @@
 import React from "react";
+import UserManual from "../../public/UserManual.pdf";
 import "./DownloadBtn.css";
 import circle from "../images/circle.png";
 import diamond from "../images/diamond.png";
@@ -6,8 +7,15 @@ import star from "../images/star.png";
 import triangle from "../images/triangle.png";
 
 const DownloadBtn = () => {
+  const handleClick = () => {
+    const link = document.createElement("a");
+    link.href = UserManual
+    link.download = "UserManual.pdf"
+    link.click()
+  }
   return (
-    <div className="downloadBtn">
+    <div onClick={handleClick}>
+      <div className="downloadBtn">
       <a href="#" className="button">
         <div className="button__content">
           <span className="button__text">Download User Manual</span>
@@ -23,6 +31,7 @@ const DownloadBtn = () => {
         <img src={triangle} alt="" className="button__triangle" />
         <div className="button__shadow"></div>
       </a>
+    </div>
     </div>
   );
 };
