@@ -1,17 +1,17 @@
 @keyframes oceanWave {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 50% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
+  0% {
+    background-position: 0% 50%;
   }
-  
-  .footer {
-    background: linear-gradient(to right, #ffffff, #3939e3, #4e4eae, #3e3ed0);
-    background-size: 200% 200%;
-    animation: oceanWave 4s linear infinite;
+  50% {
+    background-position: 50% 50%;
   }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.footer {
+  background: linear-gradient(to right, #f12626, #3939e3, #4e4eae, #933ed0);
+  background-size: 200% 200%;
+  animation: oceanWave 4s linear infinite;
+}
