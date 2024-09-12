@@ -25,3 +25,4 @@ Tasks = [✗ = not done, ✓ = task done, ... = task in progress]
 [✓] Added download button -> 08/09/2024
 [✓] Added View Profile Page -> 11/09/2024
 [✓] Timetable edit page -> 11/09/2024
+[✓] Profile edit Functionality -> 12/09/2024

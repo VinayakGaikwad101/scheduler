@@ -4,7 +4,7 @@ import { handleError, handleSuccess } from "../utils/Toast";
 
 const TimeTableEdit = () => {
   const [registrationNumber, setRegistrationNumber] = useState(
-    localStorage.getItem("loggedUserRegistrationNumber") || ""
+    localStorage.getItem("loggedUserRegistrationNumber")
   );
   const [day, setDay] = useState("");
   const [lectureName, setLectureName] = useState("");
@@ -53,8 +53,7 @@ const TimeTableEdit = () => {
         handleError(responseData.message);
       }
     } catch (error) {
-      console.error(error);
-      handleError("An error occurred while updating timetable.");
+      handleError(error);
     }
   };
 

@@ -33,6 +33,7 @@ const manageProfile = async (req, res) => {
 
     // Validate allowed fields (excluding registrationNumber, email, password)
     const allowedUpdates = [
+      "fullName",
       "parentBranch",
       "parentBranchDivision",
       "parentBranchBatch",
@@ -46,6 +47,19 @@ const manageProfile = async (req, res) => {
       "mdmBatch",
       "mdmRollNo",
     ];
+
+    // Filter out empty fields
+    const nonEmptyUpdates = Object.fromEntries(
+      Object.entries(filteredUpdates).filter(([field, value]) => value !== "")
+    );
+
+    if (Object.keys(nonEmptyUpdates).length === 0) {
+      return res.status(400).json({
+        message: "Please fill out at least one field.",
+        success: false,
+      });
+    }
+
     const invalidUpdates = Object.keys(filteredUpdates).filter(
       (field) => !allowedUpdates.includes(field)
     );
