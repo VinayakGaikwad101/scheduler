@@ -113,40 +113,36 @@ const getTimetable = async (req, res) => {
 };
 
 // code for deleting timetable for a given day
-// const deleteTimetableForDay = async (req, res) => {
-//   try {
-//     const { registrationNumber, day } = req.body;
+const deleteTimetableForDay = async (req, res) => {
+  try {
+    const { registrationNumber, day } = req.body;
 
-//     const timetable = await Timetable.findOne({ registrationNumber });
+    const timetable = await Timetable.findOne({ registrationNumber });
 
-//     if (!timetable) {
-//       return res.status(404).json({
-//         message: `Timetable not found for registration number ${registrationNumber}`,
-//         success: false,
-//       });
-//     }
+    if (!timetable) {
+      return res.status(404).json({
+        message: `Timetable not found for registration number ${registrationNumber}`,
+        success: false,
+      });
+    }
 
-//     const updatedSchedule = timetable.schedule.filter(
-//       (entry) => entry.day !== day
-//     );
+    const updatedSchedule = timetable.schedule.filter(
+      (entry) => entry.day !== day
+    );
 
-//     timetable.schedule = updatedSchedule;
-//     await timetable.save();
+    timetable.schedule = updatedSchedule;
+    await timetable.save();
 
-//     return res.status(200).json({
-//       message: `Deleted timetable entries for ${day}`,
-//       success: true,
-//     });
-//   } catch (error) {
-//     return res.status(500).json({
-//       message: "Error in delete timetable API",
-//       success: false,
-//     });
-//   }
-// };
-
-export {
-  manageTimeTable,
-  getTimetable,
-  // deleteTimetableForDay
+    return res.status(200).json({
+      message: `Deleted timetable entries for ${day}`,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error in delete timetable API",
+      success: false,
+    });
+  }
 };
+
+export { manageTimeTable, getTimetable, deleteTimetableForDay };

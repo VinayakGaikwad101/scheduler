@@ -70,6 +70,11 @@ const LoggedNavbar = () => {
             </Link>
           </li>
           <li>
+            <Link to="/delete-timetable" className="text-white">
+              Delete Timetable
+            </Link>
+          </li>
+          <li>
             <button onClick={handleLogOut} className="text-white">
               Logout
             </button>
@@ -98,6 +103,11 @@ const LoggedNavbar = () => {
           <li className="py-2">
             <Link to="/edit-timetable" className="text-white">
               Edit Timetable
+            </Link>
+          </li>
+          <li className="py-2">
+            <Link to="/delete-timetable" className="text-white">
+              Delete Timetable
             </Link>
           </li>
           <li className="py-2">

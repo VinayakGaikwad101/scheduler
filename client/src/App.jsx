@@ -13,6 +13,7 @@ import { ToastContainer } from "react-toastify";
 import TimeTableEdit from "./pages/TimeTableEdit";
 import TimeTable from "./pages/TimeTable";
 import ViewProfile from "./pages/ViewProfile";
+import DeleteTimetable from "./pages/DeleteTimetable";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -88,6 +89,16 @@ const App = () => {
         <ProtectRoutes>
           <LoggedNavbar />
           <ViewProfile />
+          <ToastContainer />
+        </ProtectRoutes>
+      ),
+    },
+    {
+      path: "/delete-timetable",
+      element: (
+        <ProtectRoutes>
+          <LoggedNavbar />
+          <DeleteTimetable />
           <ToastContainer />
         </ProtectRoutes>
       ),
