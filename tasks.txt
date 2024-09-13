@@ -28,5 +28,6 @@ Tasks = [✗ = not done, ✓ = task done, ... = task in progress]
 [✓] Profile edit Functionality -> 12/09/2024
 [✓] Feedback form Functionality -> 12/09/2024
 [✓] User manual PDF -> 12/09/2024
+[✓] Delete timetable functionality -> 13/09/2024
 
 [...] Tutorial Video for scheduler 

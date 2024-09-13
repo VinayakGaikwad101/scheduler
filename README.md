@@ -58,6 +58,8 @@
 
 ### [✓] User manual PDF -> 12/09/2024
 
+### [✓] Delete timetable functionality -> 13/09/2024
+
 ### [...] Tutorial Video for scheduler 
 
 ## Dependencies:
