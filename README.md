@@ -58,7 +58,7 @@
 
 ### [✓] User manual PDF -> 12/09/2024
 
-### [✓] Tutorial Video for scheduler -> 12/09/2024
+### [...] Tutorial Video for scheduler 
 
 ## Dependencies:
 
