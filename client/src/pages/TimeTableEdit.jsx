@@ -248,6 +248,7 @@ const TimeTableEdit = () => {
               type="text"
               value={facultyName}
               onChange={(e) => setFacultyName(e.target.value)}
+              required
             />
           </div>
         </div>
