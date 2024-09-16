@@ -143,7 +143,17 @@ export default function App() {
           key={index}
           className="whitespace-nowrap border-r-2 border-b-2 px-6 py-4 dark:border-black bg-slate-500"
         >
-          {lecture ? lecture.lectureName : ""}
+          {lecture ? (
+            <div className="text-left">
+              Lecture: {lecture.lectureName}
+              <br />
+              Faculty: {lecture.facultyName}
+              <br />
+              Venue: {lecture.venue}
+            </div>
+          ) : (
+            ""
+          )}
         </td>
       );
     });
