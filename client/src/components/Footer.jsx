@@ -9,7 +9,7 @@ const Footer = () => {
           <p className="text-3xl">Made By:</p>
           <p className="text-2xl">Vinayak Vishwanath Gaikwad (2023BCS022)</p>
           <p className="text-2xl">Vedant Milind Khete (2023BCS024)</p>
-          {/* <p className="text-2xl">Rohan Vinod Nimkar (2023BCS025)</p> */}
+          <p className="text-2xl">Rohan Vinod Nimkar (2023BCS025)</p>
         </div>
       </div>
     </footer>
