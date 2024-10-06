@@ -68,7 +68,7 @@ const Profile = () => {
       const responseData = await response.json();
 
       if (responseData.success) {
-        handleSuccess("Timetable updated successfully!");
+        handleSuccess("Profile updated successfully!");
         clearForm();
       } else {
         handleError(responseData.message);
