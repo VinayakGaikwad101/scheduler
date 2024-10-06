@@ -1,55 +1,75 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Footer from "../components/Footer";
 import Feedback from "../components/Feedback";
 
-const About = () => {
-  return (
-    <>
-      <div
-        className="min-h-screen flex flex-col justify-between"
-        style={{
-          backgroundColor: "grey",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="flex-grow">
-          <h1 className="text-2xl font-bold text-center mt-4">
-            About Schedular
-          </h1>
-          <div className="block text-sm font-medium text-black-700 p-4">
-            <p className="text-xl mb-[-15rem] text-center">
-              Scheduler is a powerful MERN application that empowers users to
-              take control of their time and online presence. With its
-              customizable timetables, real-time updates, and secure platform,
-              Scheduler offers a comprehensive suite of tools for managing
-              schedules, setting reminders, and collaborating with others.
-              Whether for personal or professional use, Scheduler is the
-              ultimate tool for optimizing time management and achieving
-              success. Scheduler's intuitive interface makes it easy for anyone
-              to use, regardless of their technical expertise. The app's robust
-              backend ensures that the app is reliable and secure, protecting
-              users' data from unauthorized access. One of the most valuable
-              features of Scheduler is its customizable timetables, which allow
-              users to create and manage multiple timetables tailored to their
-              specific needs. In addition to its customizable timetables,
-              Scheduler also offers a variety of other features, including
-              real-time updates, notifications, and collaboration tools.
-              Real-time updates keep users informed about changes to their
-              schedules, while notifications help them stay on top of important
-              deadlines and events. Scheduler's collaboration tools make it easy
-              for users to work together on projects and share schedules with
-              others.
-            </p>
-            <br /> <br /><br />
-          </div>
-          <Feedback />
-        </div>
-        <Footer />
-      </div>
-    </>
-  );
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6 },
 };
 
-export default About;
+const stagger = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+export default function About() {
+  return (
+    <div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-white to-gray-200 text-black">
+      <motion.div
+        className="flex-grow p-6 md:p-12"
+        initial="initial"
+        animate="animate"
+        variants={stagger}
+      >
+        <motion.h1
+          className="text-4xl md:text-5xl font-bold text-center mb-8"
+          variants={fadeInUp}
+        >
+          About Scheduler
+        </motion.h1>
+
+        <motion.div className="max-w-4xl mx-auto space-y-6" variants={fadeInUp}>
+          <AnimatedParagraph>
+            Web Application that saves your time
+          </AnimatedParagraph>
+        </motion.div>
+
+        <motion.div className="mt-12" variants={fadeInUp}>
+          <Feedback />
+        </motion.div>
+      </motion.div>
+
+      <Footer />
+    </div>
+  );
+}
+
+function AnimatedParagraph({ children }) {
+  const [displayedText, setDisplayedText] = useState("");
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (index < children.length) {
+      const timeoutId = setTimeout(() => {
+        setDisplayedText((prev) => prev + children.charAt(index));
+        setIndex((prev) => prev + 1);
+      }, 50); // Speed of typewriter effect
+      return () => clearTimeout(timeoutId);
+    }
+  }, [index, children]);
+
+  return (
+    <motion.p
+      className="text-lg leading-relaxed text-black text-center" // Ensuring the text is centered
+      variants={fadeInUp}
+      whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+    >
+      {displayedText}
+    </motion.p>
+  );
+}

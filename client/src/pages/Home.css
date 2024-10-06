@@ -1,6 +1,14 @@
-body{
-    background: linear-gradient(to left,  #ed3838, #e4b42f, #4a84ef, #c443c6 );
-    background-size: 200% 200%;
-    animation: oceanWave 4s linear infinite;
-}
-
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Hide scrollbars for full screen effect */
+  }
+  
+  .circle {
+    background-color: rgba(0, 123, 255, 0.5);
+  }
+  
+  .square {
+    background-color: rgba(255, 123, 0, 0.5);
+  }
+  

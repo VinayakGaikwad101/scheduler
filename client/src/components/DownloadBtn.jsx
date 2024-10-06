@@ -9,14 +9,14 @@ import triangle from "../images/triangle.png";
 const DownloadBtn = () => {
   const handleClick = () => {
     const link = document.createElement("a");
-    link.href = UserManual
-    link.download = "UserManual.pdf"
-    link.click()
-  }
+    link.href = UserManual;
+    link.download = "UserManual.pdf";
+    link.click();
+  };
+
   return (
-    <div onClick={handleClick}>
-      <div className="downloadBtn">
-      <a href="#" className="button">
+    <div className="downloadBtn">
+      <button onClick={handleClick} className="button">
         <div className="button__content">
           <span className="button__text">Download User Manual</span>
           <i className="ri-download-cloud-fill button__icon"></i>
@@ -30,8 +30,7 @@ const DownloadBtn = () => {
         <img src={diamond} alt="" className="button__diamond" />
         <img src={triangle} alt="" className="button__triangle" />
         <div className="button__shadow"></div>
-      </a>
-    </div>
+      </button>
     </div>
   );
 };
