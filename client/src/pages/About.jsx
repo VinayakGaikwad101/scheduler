@@ -26,13 +26,7 @@ export default function About() {
         animate="animate"
         variants={stagger}
       >
-        <motion.h1
-          className="text-4xl md:text-5xl font-bold text-center mb-8"
-          variants={fadeInUp}
-        >
-          About Scheduler
-        </motion.h1>
-
+       
         <motion.div className="max-w-4xl mx-auto space-y-6" variants={fadeInUp}>
           <AnimatedParagraph>
             Web Application that saves your time
