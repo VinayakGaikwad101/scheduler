@@ -58,7 +58,6 @@ const TimeTableEdit = () => {
   };
 
   const clearForm = () => {
-    setRegistrationNumber("");
     setDay("");
     setLectureName("");
     setFrom("");

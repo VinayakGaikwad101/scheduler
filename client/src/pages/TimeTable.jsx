@@ -1,10 +1,20 @@
 import React, { useEffect, useState, useRef } from "react";
-import { ToastContainer } from "react-toastify";
+import { motion } from "framer-motion";
+import { ToastContainer, toast } from "react-toastify";
 
-import PrintPage from "../components/PrintPage";
+const PrintPage = ({ componentRef }) => (
+  <button
+    onClick={() => window.print()}
+    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+  >
+    Print Timetable
+  </button>
+);
 
-export default function App() {
+const Timetable = () => {
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const componentRef = useRef();
 
   useEffect(() => {
@@ -19,13 +29,18 @@ export default function App() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ registrationNumber: registrationNumber }),
+          body: JSON.stringify({ registrationNumber }),
         });
+        if (!response.ok) {
+          throw new Error("Failed to fetch timetable");
+        }
         const result = await response.json();
         setData(result.timetable);
-        console.log(result.timetable);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        setError(error.message);
+        toast.error("Error fetching timetable. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -45,10 +60,10 @@ export default function App() {
 
   const parseTimeSlot = (timeSlot) => {
     const parts = timeSlot.split("-");
-    const from = parseInt(parts[0].slice(0, -2)); // Extract hour from "10AM"
-    const to = parseInt(parts[1].slice(0, -2)); // Extract hour from "11AM"
-    const fromPeriod = parts[0].slice(-2); // Extract "AM" or "PM"
-    const toPeriod = parts[1].slice(-2); // Extract "AM" or "PM"
+    const from = parseInt(parts[0].slice(0, -2));
+    const to = parseInt(parts[1].slice(0, -2));
+    const fromPeriod = parts[0].slice(-2);
+    const toPeriod = parts[1].slice(-2);
     return { from, to, fromPeriod, toPeriod };
   };
 
@@ -84,50 +99,69 @@ export default function App() {
   };
 
   const renderTimetable = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center h-screen">
+          <motion.div
+            className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          />
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="flex items-center justify-center h-screen">
+          <h1 className="text-2xl font-bold text-red-600">{error}</h1>
+        </div>
+      );
+    }
+
     if (!data) {
       return (
         <div className="flex items-center justify-center h-screen">
-          <h1 className="text-4xl font-bold text-gray-800">
-            TimeTable not found
+          <h1 className="text-2xl font-bold text-gray-800">
+            Timetable not found
           </h1>
         </div>
       );
     }
+
     const { schedule } = data;
     const sortedSchedule = sortDays(schedule);
     const uniqueTimeSlots = sortTimeSlots(getUniqueTimeSlots(sortedSchedule));
+
     return (
-      <table className="min-w-full border text-white text-center text-sm md:text-lg font-semibold dark:border-black">
-        <thead>
-          <tr>
-            <th
-              scope="col"
-              className="border-r-2 border-b-2 px-6 py-4 dark:border-black bg-black"
-            >
-              Day/Time
-            </th>
-            {uniqueTimeSlots.map((timeSlot) => (
-              <th
-                key={timeSlot}
-                scope="col"
-                className="border-r-2 border-b-2 px-6 py-4 dark:border-black bg-green-800"
-              >
-                {timeSlot}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {sortedSchedule.map((day) => (
-            <tr key={day._id} className="border-b-2 dark:border-black">
-              <td className="whitespace-nowrap border-r-2 border-b-2 px-6 py-4 font-medium dark:border-black bg-blue-900">
-                {day.day}
-              </td>
-              {renderLectureCells(day, uniqueTimeSlots)}
+      <div className="overflow-x-auto">
+        <table className="min-w-full border-collapse bg-white shadow-lg rounded-lg overflow-hidden">
+          <thead>
+            <tr className="bg-gradient-to-r from-blue-600 to-blue-400 text-white">
+              <th className="py-3 px-4 font-semibold text-left">Day/Time</th>
+              {uniqueTimeSlots.map((timeSlot) => (
+                <th key={timeSlot} className="py-3 px-4 font-semibold">
+                  {timeSlot}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sortedSchedule.map((day, index) => (
+              <motion.tr
+                key={day._id}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                className="border-b hover:bg-gray-50 transition duration-300"
+              >
+                <td className="py-3 px-4 font-medium">{day.day}</td>
+                {renderLectureCells(day, uniqueTimeSlots)}
+              </motion.tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     );
   };
 
@@ -139,20 +173,24 @@ export default function App() {
           timeSlot
       );
       return (
-        <td
-          key={index}
-          className="whitespace-nowrap border-r-2 border-b-2 px-6 py-4 dark:border-black bg-slate-500"
-        >
+        <td key={index} className="py-3 px-4">
           {lecture ? (
-            <div className="text-left">
-              Lecture: {lecture.lectureName}
-              <br />
-              Faculty: {lecture.facultyName}
-              <br />
-              Venue: {lecture.venue}
-            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="bg-gradient-to-r from-green-100 to-green-200 p-2 rounded-lg shadow"
+            >
+              <p className="font-semibold text-gray-800">
+                {lecture.lectureName}
+              </p>
+              <p className="text-sm text-gray-600">
+                Faculty: {lecture.facultyName}
+              </p>
+              <p className="text-sm text-gray-600">Venue: {lecture.venue}</p>
+            </motion.div>
           ) : (
-            ""
+            <div className="h-full w-full bg-gray-100 rounded-lg"></div>
           )}
         </td>
       );
@@ -160,16 +198,19 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-          <div className="overflow-hidden" ref={componentRef}>
-            {renderTimetable()}
-          </div>
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+        Your Timetable
+      </h1>
+      <div className="bg-white rounded-lg shadow-lg p-6" ref={componentRef}>
+        {renderTimetable()}
       </div>
-      <PrintPage componentRef={componentRef} />
+      <div className="mt-8 flex justify-center">
+        <PrintPage componentRef={componentRef} />
+      </div>
       <ToastContainer />
     </div>
   );
-}
+};
+
+export default Timetable;
