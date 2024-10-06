@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../utils/Toast";
 
 export default function Component() {
   const [formData, setFormData] = useState({
@@ -40,7 +40,7 @@ export default function Component() {
       };
 
       if (Object.keys(data).length <= 1) {
-        toast.error("Please fill out at least one field.");
+        handleError("Please fill out at least one field.");
         return;
       }
 
@@ -53,13 +53,13 @@ export default function Component() {
       const responseData = await response.json();
 
       if (responseData.success) {
-        toast.success("Profile updated successfully!");
+        handleSuccess("Profile updated successfully!");
         setFormData({});
       } else {
-        toast.error(responseData.message);
+        handleError(responseData.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      handleError(error.message);
     }
   };
 
