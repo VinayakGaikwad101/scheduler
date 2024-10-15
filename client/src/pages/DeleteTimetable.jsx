@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { ToastContainer } from "react-toastify";
-
+import "react-toastify/dist/ReactToastify.css";
 import { handleError, handleSuccess } from "../utils/Toast";
+import { Trash2 } from "lucide-react";
 
 const DeleteTimetable = () => {
   const [registrationNumber, setRegistrationNumber] = useState(
@@ -25,10 +27,6 @@ const DeleteTimetable = () => {
         },
         body: JSON.stringify(data),
       });
-      if (!response.success) {
-        handleError(response.message);
-      }
-
       const responseData = await response.json();
 
       if (responseData.success) {
@@ -38,7 +36,7 @@ const DeleteTimetable = () => {
         handleError(responseData.message);
       }
     } catch (error) {
-      handleError(error);
+      handleError(error.message);
     }
   };
 
@@ -48,34 +46,54 @@ const DeleteTimetable = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label>Select Day</label>
-        <select
-          className="w-full px-3 py-2 text-gray-700 border rounded border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
-          id="day"
-          value={day}
-          onChange={(e) => setDay(e.target.value)}
-          required
-        >
-          <option value="">Select Day</option>
-          <option value="Monday">Monday</option>
-          <option value="Tuesday">Tuesday</option>
-          <option value="Wednesday">Wednesday</option>
-          <option value="Thursday">Thursday</option>
-          <option value="Friday">Friday</option>
-          <option value="Saturday">Saturday</option>
-          <option value="Sunday">Sunday</option>
-        </select>
-        <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Submit
-        </button>
-      </form>
-      <ToastContainer />
-    </div>
+    <motion.div
+      className="min-h-screen flex items-center justify-center bg-gray-100 p-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
+        initial={{ y: -50 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 100 }}
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Delete Timetable</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="day" className="block text-sm font-medium text-gray-700 mb-1">
+              Select Day
+            </label>
+            <select
+              id="day"
+              value={day}
+              onChange={(e) => setDay(e.target.value)}
+              required
+              className="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
+            >
+              <option value="">Select Day</option>
+              {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(
+                (d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                )
+              )}
+            </select>
+          </div>
+          <motion.button
+            type="submit"
+            className="w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 transition duration-200 flex items-center justify-center"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Trash2 className="mr-2" size={18} />
+            Delete Timetable
+          </motion.button>
+        </form>
+      </motion.div>
+      <ToastContainer position="bottom-right" autoClose={3000} />
+    </motion.div>
   );
 };
 

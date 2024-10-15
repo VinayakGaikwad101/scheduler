@@ -1,265 +1,231 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { handleError, handleSuccess } from "../utils/Toast";
+import { Edit } from "lucide-react";
+
+const InputField = ({ label, id, type, value, onChange, required, readOnly, options }) => (
+  <motion.div
+    className="mb-4"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+  >
+    <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={id}>
+      {label}
+    </label>
+    {type === "select" ? (
+      <select
+        className="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
+        id={id}
+        value={value}
+        onChange={onChange}
+        required={required}
+      >
+        <option value="">Select {label}</option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    ) : (
+      <input
+        className="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
+        id={id}
+        type={type}
+        value={value}
+        onChange={onChange}
+        required={required}
+        readOnly={readOnly}
+      />
+    )}
+  </motion.div>
+);
 
 const TimeTableEdit = () => {
-  const [registrationNumber, setRegistrationNumber] = useState(
-    localStorage.getItem("loggedUserRegistrationNumber")
-  );
-  const [day, setDay] = useState("");
-  const [lectureName, setLectureName] = useState("");
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
-  const [fromTimeZone, setFromTimeZone] = useState("");
-  const [toTimeZone, setToTimeZone] = useState("");
-  const [venue, setVenue] = useState("");
-  const [facultyName, setFacultyName] = useState("");
+  const [formData, setFormData] = useState({
+    registrationNumber: localStorage.getItem("loggedUserRegistrationNumber"),
+    day: "",
+    lectureName: "",
+    from: "",
+    to: "",
+    fromTimeZone: "",
+    toTimeZone: "",
+    venue: "",
+    facultyName: "",
+  });
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
       const url = "http://localhost:8000/user/manage_timetable";
-      const data = {
-        registrationNumber,
-        day,
-        lectureName,
-        from,
-        to,
-        fromTimeZone,
-        toTimeZone,
-        venue,
-        facultyName,
-      };
-
       const response = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
-
-      if (!response.success) {
-        handleError(response.message);
-      }
 
       const responseData = await response.json();
 
       if (responseData.success) {
         handleSuccess("Timetable updated successfully!");
-        clearForm();
+        setFormData((prev) => ({
+          ...prev,
+          day: "",
+          lectureName: "",
+          from: "",
+          to: "",
+          fromTimeZone: "",
+          toTimeZone: "",
+          venue: "",
+          facultyName: "",
+        }));
       } else {
         handleError(responseData.message);
       }
     } catch (error) {
-      handleError(error);
+      handleError(error.message);
     }
   };
 
-  const clearForm = () => {
-    setDay("");
-    setLectureName("");
-    setFrom("");
-    setTo("");
-    setFromTimeZone("");
-    setToTimeZone("");
-    setVenue("");
-    setFacultyName("");
-  };
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">Edit Timetable</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="flex flex-wrap -m-2">
-          <div className="w-full p-2">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700"
-              htmlFor="registrationNumber"
-            >
-              Registration Number
-            </label>
-            <input
-              className="w-full px-3 py-2 text-gray-700 border rounded border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
-              id="registrationNumber"
-              type="text"
-              value={registrationNumber}
-              onChange={(e) => setRegistrationNumber(e.target.value)}
-              required
-              readOnly
-            />
+    <motion.div
+      className="min-h-screen flex items-center justify-center bg-gray-100 p-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
+        initial={{ y: -50 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 100 }}
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Edit Timetable</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <InputField
+            label="Registration Number"
+            id="registrationNumber"
+            type="text"
+            value={formData.registrationNumber}
+            onChange={handleChange}
+            required
+            readOnly
+          />
+          <InputField
+            label="Day"
+            id="day"
+            type="select"
+            value={formData.day}
+            onChange={handleChange}
+            required
+            options={["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]}
+          />
+          <InputField
+            label="Lecture Name"
+            id="lectureName"
+            type="text"
+            value={formData.lectureName}
+            onChange={handleChange}
+            required
+          />
+          <div className="flex space-x-4">
+            <div className="w-1/2">
+              <InputField
+                label="From"
+                id="from"
+                type="number"
+                value={formData.from}
+                onChange={(e) => {
+                  const newValue = parseInt(e.target.value, 10);
+                  if (newValue >= 1 && newValue <= 12) {
+                    handleChange(e);
+                  } else {
+                    handleError("Invalid input: Hours must be between 1 and 12.");
+                  }
+                }}
+                required
+              />
+            </div>
+            <div className="w-1/2">
+              <InputField
+                label="From (AM/PM)"
+                id="fromTimeZone"
+                type="select"
+                value={formData.fromTimeZone}
+                onChange={handleChange}
+                required
+                options={["AM", "PM"]}
+              />
+            </div>
           </div>
-          <div className="w-full md:w-1/2 p-2">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700"
-              htmlFor="day"
-            >
-              Day
-            </label>
-            <select
-              className="w-full px-3 py-2 text-gray-700 border rounded border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
-              id="day"
-              value={day}
-              onChange={(e) => setDay(e.target.value)}
-              required
-            >
-              <option value="">Select Day</option>
-              <option value="Monday">Monday</option>
-              <option value="Tuesday">Tuesday</option>
-              <option value="Wednesday">Wednesday</option>
-              <option value="Thursday">Thursday</option>
-              <option value="Friday">Friday</option>
-              <option value="Saturday">Saturday</option>
-              <option value="Sunday">Sunday</option>
-            </select>
+          <div className="flex space-x-4">
+            <div className="w-1/2">
+              <InputField
+                label="To"
+                id="to"
+                type="number"
+                value={formData.to}
+                onChange={(e) => {
+                  const newValue = parseInt(e.target.value, 10);
+                  if (newValue >= 1 && newValue <= 12) {
+                    handleChange(e);
+                  } else {
+                    handleError("Invalid input: Hours must be between 1 and 12.");
+                  }
+                }}
+                required
+              />
+            </div>
+            <div className="w-1/2">
+              <InputField
+                label="To (AM/PM)"
+                id="toTimeZone"
+                type="select"
+                value={formData.toTimeZone}
+                onChange={handleChange}
+                required
+                options={["AM", "PM"]}
+              />
+            </div>
           </div>
-          <div className="w-full p-2">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700"
-              htmlFor="lectureName"
-            >
-              Lecture Name
-            </label>
-            <input
-              className="w-full px-3 py-2 text-gray-700 border rounded border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
-              id="lectureName"
-              type="text"
-              value={lectureName}
-              onChange={(e) => setLectureName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="w-full p-2">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700"
-              htmlFor="from"
-            >
-              From
-            </label>
-            <input
-              className="w-full px-3 py-2 text-gray-700 border rounded border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
-              id="from"
-              type="number"
-              min="1"
-              max="12"
-              value={from}
-              onChange={(e) => {
-                const newValue = parseInt(e.target.value, 10);
-                if (newValue >= 1 && newValue <= 12) {
-                  setFrom(newValue);
-                } else {
-                  handleError("Invalid input: Hours must be between 1 and 12.");
-                }
-              }}
-              required
-            />
-          </div>
-          <div className="w-full p-2">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700"
-              htmlFor="to"
-            >
-              To
-            </label>
-            <input
-              className="w-full px-3 py-2 text-gray-700 border rounded border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
-              id="to"
-              type="number"
-              min="1"
-              max="12"
-              value={to}
-              onChange={(e) => {
-                const newValue = parseInt(e.target.value, 10);
-                if (newValue >= 1 && newValue <= 12) {
-                  setTo(newValue);
-                } else {
-                  handleError("Invalid input: Hours must be between 1 and 12.");
-                }
-              }}
-              required
-            />
-          </div>
-          <div className="w-full md:w-1/2 p-2">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700"
-              htmlFor="fromTimeZone"
-            >
-              From (AM/PM)
-            </label>
-            <select
-              className="w-full px-3 py-2 text-gray-700 border rounded border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
-              id="fromTimeZone"
-              value={fromTimeZone}
-              onChange={(e) => setFromTimeZone(e.target.value)}
-              required
-            >
-              <option value="">Select AM / PM</option>
-              <option value="AM">AM</option>
-              <option value="PM">PM</option>
-            </select>
-          </div>
-          <div className="w-full md:w-1/2 p-2">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700"
-              htmlFor="toTimeZone"
-            >
-              To (AM/PM)
-            </label>
-            <select
-              className="w-full px-3 py-2 text-gray-700 border rounded border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
-              id="toTimeZone"
-              value={toTimeZone}
-              onChange={(e) => setToTimeZone(e.target.value)}
-              required
-            >
-              <option value="">Select AM / PM</option>
-              <option value="AM">AM</option>
-              <option value="PM">PM</option>
-            </select>
-          </div>
-          <div className="w-full p-2">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700"
-              htmlFor="venue"
-            >
-              Venue
-            </label>
-            <input
-              className="w-full px-3 py-2 text-gray-700 border rounded border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
-              id="venue"
-              type="text"
-              value={venue}
-              onChange={(e) => setVenue(e.target.value)}
-              required
-            />
-          </div>
-          <div className="w-full p-2">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700"
-              htmlFor="facultyName"
-            >
-              Faculty Name
-            </label>
-            <input
-              className="w-full px-3 py-2 text-gray-700 border rounded border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
-              id="facultyName"
-              type="text"
-              value={facultyName}
-              onChange={(e) => setFacultyName(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Submit
-        </button>
-      </form>
-      <ToastContainer />
-    </div>
+          <InputField
+            label="Venue"
+            id="venue"
+            type="text"
+            value={formData.venue}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="Faculty Name"
+            id="facultyName"
+            type="text"
+            value={formData.facultyName}
+            onChange={handleChange}
+            required
+          />
+          <motion.button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition duration-200 flex items-center justify-center"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Edit className="mr-2" size={18} />
+            Update Timetable
+          </motion.button>
+        </form>
+      </motion.div>
+      <ToastContainer position="bottom-right" autoClose={3000} />
+    </motion.div>
   );
 };
 
