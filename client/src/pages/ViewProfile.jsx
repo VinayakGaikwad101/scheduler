@@ -1,22 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { handleError } from "../utils/Toast";
 
 const ViewProfile = () => {
   const [data, setData] = useState(null);
-  const [timetableData, setTimetableData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,45 +15,105 @@ const ViewProfile = () => {
         "loggedUserRegistrationNumber"
       );
       const profileUrl = "http://localhost:8000/users/getProfile";
-      const timetableUrl = "http://localhost:8000/user/fetch_timetable";
 
       try {
-        const [profileResponse, timetableResponse] = await Promise.all([
-          fetch(profileUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ registrationNumber }),
-          }),
-          fetch(timetableUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ registrationNumber }),
-          }),
-        ]);
+        const profileResponse = await fetch(profileUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ registrationNumber }),
+        });
 
         const profileResult = await profileResponse.json();
-        const timetableResult = await timetableResponse.json();
 
         if (profileResult.success) {
           setData(profileResult.user);
+        } else if (profileResult.message === "Profile not found") {
+          setData({
+            fullName: "Default User",
+            email: "default@example.com",
+            registrationNumber: "N/A",
+            parentBranch: "N/A",
+            parentBranchDivision: "N/A",
+            parentBranchBatch: "N/A",
+            parentBranchRollNo: "N/A",
+            oe: "N/A",
+            oeDivision: "N/A",
+            oeBatch: "N/A",
+            oeRollNo: "N/A",
+            mdm: "N/A",
+            mdmDivision: "N/A",
+            mdmBatch: "N/A",
+            mdmRollNo: "N/A",
+          });
         } else {
-          handleError(profileResult.message);
-        }
-
-        if (timetableResult.success) {
-          setTimetableData(timetableResult.timetable);
-        } else {
-          handleError(timetableResult.message);
+          handleError("Error fetching profile data");
         }
       } catch (error) {
         console.error("Error fetching data:", error);
         handleError("Error fetching data");
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, []);
 
-  if (!data || !timetableData) {
+  useEffect(() => {
+    if (!loading && canvasRef.current) {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, alpha: true });
+      renderer.setSize(300, 300);
+
+      const loader = new GLTFLoader();
+      let laptop;
+
+      loader.load(
+        '/assets/3d/laptop.glb',
+        (gltf) => {
+          laptop = gltf.scene;
+          laptop.scale.set(0.5, 0.5, 0.5);
+          scene.add(laptop);
+        },
+        undefined,
+        (error) => console.error('An error happened', error)
+      );
+
+      camera.position.z = 5;
+
+      const animate = () => {
+        requestAnimationFrame(animate);
+        if (laptop) {
+          laptop.rotation.y += 0.01;
+        }
+        renderer.render(scene, camera);
+      };
+
+      animate();
+
+      return () => {
+        renderer.dispose();
+      };
+    }
+  }, [loading]);
+
+  const renderProfileInfo = (label, value) => (
+    <motion.p
+      initial={{ opacity: 0, x: -50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+      className="text-sm leading-tight mb-1"
+    >
+      <span className="font-semibold">{label}: </span>
+      {value ? (
+        value
+      ) : (
+        <span className="text-red-500">{label} not specified</span>
+      )}
+    </motion.p>
+  );
+
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <motion.h1
@@ -77,57 +128,24 @@ const ViewProfile = () => {
     );
   }
 
-  const hoursPerDay = [
-    { name: "Monday", hours: 8 },
-    { name: "Tuesday", hours: 7 },
-    { name: "Wednesday", hours: 9 },
-    { name: "Thursday", hours: 6 },
-    { name: "Friday", hours: 8 },
-    { name: "Saturday", hours: 4 },
-    { name: "Sunday", hours: 2 },
-  ];
-
-  const efficiencyData = [
-    { name: "Optimized", value: 76.43 },
-    { name: "Unoptimized", value: 23.57 },
-  ];
-
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
-  const renderProfileInfo = (label, value) => (
-    <motion.p
-      initial={{ opacity: 0, x: -50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
-      className="text-xl leading-tight mb-2"
-    >
-      <span className="font-semibold">{label}: </span>
-      {value ? (
-        value
-      ) : (
-        <span className="text-red-500">{label} not specified</span>
-      )}
-    </motion.p>
-  );
-
   return (
-    <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-10 p-6">
+    <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-10 p-6">
       <motion.h1
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-3xl font-bold mb-6 text-center text-gray-800"
+        className="text-2xl font-bold mb-4 text-center text-gray-800"
       >
-        User Profile and Timetable Analysis
+        User Profile
       </motion.h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="overflow-y-auto max-h-[70vh]">
           <motion.h2
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-2xl font-semibold mb-4 text-gray-700"
+            className="text-xl font-semibold mb-2 text-gray-700"
           >
             Profile Information
           </motion.h2>
@@ -135,10 +153,7 @@ const ViewProfile = () => {
           {renderProfileInfo("Email", data.email)}
           {renderProfileInfo("Registration Number", data.registrationNumber)}
           {renderProfileInfo("Parent Branch", data.parentBranch)}
-          {renderProfileInfo(
-            "Parent Branch Division",
-            data.parentBranchDivision
-          )}
+          {renderProfileInfo("Parent Branch Division", data.parentBranchDivision)}
           {renderProfileInfo("Parent Branch Batch", data.parentBranchBatch)}
           {renderProfileInfo("Parent Branch Roll No.", data.parentBranchRollNo)}
           {renderProfileInfo("Open Elective", data.oe)}
@@ -150,68 +165,13 @@ const ViewProfile = () => {
           {renderProfileInfo("MDM Batch", data.mdmBatch)}
           {renderProfileInfo("MDM Roll No.", data.mdmRollNo)}
         </div>
-
-        <div>
-          <motion.h2
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-2xl font-semibold mb-4 text-gray-700"
-          >
-            Timetable Analysis
-          </motion.h2>
+        <div className="flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <h3 className="text-xl font-semibold mb-2 text-gray-600">
-              Hours Spent Per Day
-            </h3>
-            <BarChart
-              width={500}
-              height={300}
-              data={hoursPerDay}
-              className="mx-auto"
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="hours" fill="#8884d8" />
-            </BarChart>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-8"
-          >
-            <h3 className="text-xl font-semibold mb-2 text-gray-600">
-              Timetable Efficiency
-            </h3>
-            <PieChart width={400} height={400} className="mx-auto">
-              <Pie
-                data={efficiencyData}
-                cx={200}
-                cy={200}
-                labelLine={false}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {efficiencyData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
+            <canvas ref={canvasRef} />
           </motion.div>
         </div>
       </div>

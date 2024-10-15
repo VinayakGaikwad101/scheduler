@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PrintPage = ({ componentRef }) => (
   <button
@@ -17,6 +18,14 @@ const Timetable = () => {
   const [error, setError] = useState(null);
   const componentRef = useRef();
 
+  const handleSuccess = (message) => {
+    toast.success(message);
+  };
+
+  const handleError = (message) => {
+    toast.error(message);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const registrationNumber = localStorage.getItem(
@@ -31,14 +40,15 @@ const Timetable = () => {
           },
           body: JSON.stringify({ registrationNumber }),
         });
-        if (!response.ok) {
-          throw new Error("Failed to fetch timetable");
-        }
         const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.message || "Failed to fetch timetable");
+        }
         setData(result.timetable);
+        handleSuccess("Timetable fetched successfully");
       } catch (error) {
         setError(error.message);
-        toast.error("Error fetching timetable. Please try again later.");
+        handleError(error.message);
       } finally {
         setLoading(false);
       }
@@ -111,15 +121,7 @@ const Timetable = () => {
       );
     }
 
-    if (error) {
-      return (
-        <div className="flex items-center justify-center h-screen">
-          <h1 className="text-2xl font-bold text-red-600">{error}</h1>
-        </div>
-      );
-    }
-
-    if (!data) {
+    if (error || !data || !data.schedule || data.schedule.length === 0) {
       return (
         <div className="flex items-center justify-center h-screen">
           <h1 className="text-2xl font-bold text-gray-800">

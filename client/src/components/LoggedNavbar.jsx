@@ -1,9 +1,20 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer } from "react-toastify";
 import { handleSuccess } from "../utils/Toast";
+import { Calendar, Clock, Edit, Eye, LogOut, Menu, User, X } from "lucide-react";
 
-const LoggedNavbar = () => {
+const Button = ({ children, className, ...props }) => (
+  <button
+    className={`px-4 py-2 rounded transition-colors duration-200 ${className}`}
+    {...props}
+  >
+    {children}
+  </button>
+);
+
+export default function LoggedNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -12,6 +23,7 @@ const LoggedNavbar = () => {
   };
 
   const handleLogOut = (e) => {
+    e.preventDefault();
     localStorage.removeItem("loggedUserName");
     localStorage.removeItem("loggedUserEmail");
     localStorage.removeItem("loggedUserRegistrationNumber");
@@ -22,104 +34,137 @@ const LoggedNavbar = () => {
     }, 1000);
   };
 
+  const menuItems = [
+    { href: "/profile", label: "Profile", icon: User },
+    { href: "/view-profile", label: "View Profile", icon: Eye },
+    { href: "/timetable", label: "Timetable", icon: Calendar },
+    { href: "/edit-timetable", label: "Edit Timetable", icon: Edit },
+    { href: "/delete-timetable", label: "Delete Timetable", icon: Clock },
+  ];
+
   return (
-    <nav className="bg-blue-500 p-4">
+    <motion.nav
+      className="bg-gray-900 p-4"
+      initial={{ opacity: 0, y: -50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="flex items-center justify-between">
-        <div className="flex items-center">
+        <motion.div
+          className="flex items-center"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
           <img
             src="https://r2.erweima.ai/imgcompressed/compressed_faba31e3cd615198449e6fdf2d4800e0.webp"
             alt="Logo"
             className="h-10 rounded-lg"
           />
-          <span className="ml-2 text-white font-bold text-3xl">Scheduler</span>
-        </div>
+          <motion.span
+            className="ml-2 text-white font-bold text-3xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            Scheduler
+          </motion.span>
+        </motion.div>
         <div className="md:hidden">
-          <button className="text-white" onClick={toggleMenu}>
-            <svg
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              className="w-6 h-6"
-            >
-              <path d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-          </button>
+          <Button className="text-white" onClick={toggleMenu} aria-label="Toggle menu">
+            <AnimatePresence mode="wait" initial={false}>
+              {isMenuOpen ? (
+                <motion.div
+                  key="close"
+                  initial={{ rotate: 0 }}
+                  animate={{ rotate: 90 }}
+                  exit={{ rotate: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X className="h-6 w-6" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu"
+                  initial={{ rotate: 0 }}
+                  animate={{ rotate: 0 }}
+                  exit={{ rotate: 90 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu className="h-6 w-6" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Button>
         </div>
-        <ul className="hidden md:flex space-x-4">
-          <li>
-            <Link to="/profile" className="text-white">
-              Profile
-            </Link>
-          </li>
-          <li>
-            <Link to="/view-profile" className="text-white">
-              View Profile
-            </Link>
-          </li>
-          <li>
-            <Link to="/timetable" className="text-white">
-              Timetable
-            </Link>
-          </li>
-          <li>
-            <Link to="/edit-timetable" className="text-white">
-              Edit Timetable
-            </Link>
-          </li>
-          <li>
-            <Link to="/delete-timetable" className="text-white">
-              Delete Timetable
-            </Link>
-          </li>
-          <li>
-            <button onClick={handleLogOut} className="text-white">
+        <motion.ul className="hidden md:flex space-x-4">
+          {menuItems.map((item, index) => (
+            <motion.li
+              key={item.href}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Link to={item.href}>
+                <Button className="text-white hover:text-gray-300">
+                  <item.icon className="mr-2 h-4 w-4 inline" aria-hidden="true" />
+                  {item.label}
+                </Button>
+              </Link>
+            </motion.li>
+          ))}
+          <motion.li
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: menuItems.length * 0.1 }}
+          >
+            <Button className="text-white hover:text-gray-300" onClick={handleLogOut}>
+              <LogOut className="mr-2 h-4 w-4 inline" aria-hidden="true" />
               Logout
-            </button>
-          </li>
-        </ul>
+            </Button>
+          </motion.li>
+        </motion.ul>
       </div>
 
-      {/* mobile menu */}
-      {isMenuOpen ? (
-        <ul className="flex-col md:hidden">
-          <li className="py-2">
-            <Link to="/profile" className="text-white">
-              Profile
-            </Link>
-          </li>
-          <li className="py-2">
-            <Link to="/view-profile" className="text-white">
-              View Profile
-            </Link>
-          </li>
-          <li className="py-2">
-            <Link to="/timetable" className="text-white">
-              Timetable
-            </Link>
-          </li>
-          <li className="py-2">
-            <Link to="/edit-timetable" className="text-white">
-              Edit Timetable
-            </Link>
-          </li>
-          <li className="py-2">
-            <Link to="/delete-timetable" className="text-white">
-              Delete Timetable
-            </Link>
-          </li>
-          <li className="py-2">
-            <button onClick={handleLogOut} className="text-white">
-              Logout
-            </button>
-          </li>
-        </ul>
-      ) : null}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.ul
+            className="flex-col md:hidden mt-4 space-y-2"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {menuItems.map((item, index) => (
+              <motion.li
+                key={item.href}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Link to={item.href}>
+                  <Button className="w-full text-left text-white hover:text-gray-300">
+                    <item.icon className="mr-2 h-4 w-4 inline" aria-hidden="true" />
+                    {item.label}
+                  </Button>
+                </Link>
+              </motion.li>
+            ))}
+            <motion.li
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ delay: menuItems.length * 0.1 }}
+            >
+              <Button className="w-full text-left text-white hover:text-gray-300" onClick={handleLogOut}>
+                <LogOut className="mr-2 h-4 w-4 inline" aria-hidden="true" />
+                Logout
+              </Button>
+            </motion.li>
+          </motion.ul>
+        )}
+      </AnimatePresence>
       <ToastContainer />
-    </nav>
+    </motion.nav>
   );
-};
-
-export default LoggedNavbar;
+}
