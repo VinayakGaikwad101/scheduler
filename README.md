@@ -60,7 +60,7 @@
 
 ### [✓] Delete timetable functionality -> 13/09/2024
 
-### [...] Tutorial Video for scheduler 
+### [✓] Bug Fixes, final UI changes -> 19/11/2024
 
 ## Dependencies:
 
