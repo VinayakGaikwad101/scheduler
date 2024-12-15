@@ -28,7 +28,7 @@ const Signup = () => {
       return handleError("All fields required");
     }
     try {
-      const url = "http://localhost:8000/auth/signup";
+      const url = "https://scheduler-xck4.onrender.com/auth/signup";
       const response = await fetch(url, {
         method: "POST",
         headers: {
