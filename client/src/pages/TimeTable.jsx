@@ -22,7 +22,7 @@ const Timetable = () => {
       const registrationNumber = localStorage.getItem(
         "loggedUserRegistrationNumber"
       );
-      const url = "http://localhost:8000/user/fetch_timetable";
+      const url = "https://scheduler-xck4.onrender.com/user/fetch_timetable";
       try {
         const response = await fetch(url, {
           method: "POST",
