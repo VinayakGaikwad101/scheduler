@@ -66,7 +66,7 @@ const TimeTableEdit = () => {
     event.preventDefault();
 
     try {
-      const url = "http://localhost:8000/user/manage_timetable";
+      const url = "https://scheduler-xck4.onrender.com/user/manage_timetable";
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
