@@ -29,7 +29,7 @@ export default function Component() {
     e.preventDefault();
 
     try {
-      const url = "http://localhost:8000/users/manageProfile";
+      const url = "https://scheduler-xck4.onrender.com/users/manageProfile";
       const data = {
         registrationNumber: localStorage.getItem(
           "loggedUserRegistrationNumber"
