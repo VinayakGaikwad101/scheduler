@@ -15,7 +15,7 @@ const DeleteTimetable = () => {
     event.preventDefault();
 
     try {
-      const url = "http://localhost:8000/user/delete_timetable";
+      const url = "https://scheduler-xck4.onrender.com/user/delete_timetable";
       const data = {
         registrationNumber,
         day,
