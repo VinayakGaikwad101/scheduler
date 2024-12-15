@@ -14,7 +14,7 @@ const ViewProfile = () => {
       const registrationNumber = localStorage.getItem(
         "loggedUserRegistrationNumber"
       );
-      const profileUrl = "http://localhost:8000/users/getProfile";
+      const profileUrl = "https://scheduler-xck4.onrender.com/users/getProfile";
 
       try {
         const profileResponse = await fetch(profileUrl, {
