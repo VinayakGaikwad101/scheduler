@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 
 export default function Footer() {
   const names = [
-    "Vinayak Vishwanath Gaikwad (2023BCS022)",
-    "Vedant Milind Khete (2023BCS024)",
-    "Rohan Vinod Nimkar (2023BCS025)",
+    "Vinayak Vishwanath Gaikwad",
+    "Vedant Milind Khete",
+    "Rohan Vinod Nimkar",
   ];
 
   const containerVariants = {
