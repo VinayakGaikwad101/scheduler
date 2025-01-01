@@ -149,7 +149,7 @@ export default function Component() {
                 name="oeDivision"
                 value={formData.oeDivision}
                 onChange={handleChange}
-                options={["A", "B"]}
+                options={["A", "B", "C", "D", "E"]}
                 className="w-1/2 mr-2"
               />
               <SelectField
@@ -157,7 +157,7 @@ export default function Component() {
                 name="oeBatch"
                 value={formData.oeBatch}
                 onChange={handleChange}
-                options={["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4"]}
+                options={["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4", "E1", "E2", "E3", "E4", "None"]}
                 className="w-1/2"
               />
             </div>
@@ -181,7 +181,7 @@ export default function Component() {
                 name="mdmDivision"
                 value={formData.mdmDivision}
                 onChange={handleChange}
-                options={["A", "B"]}
+                options={["A", "B", "C"]}
                 className="w-1/2 mr-2"
               />
               <SelectField
@@ -189,7 +189,7 @@ export default function Component() {
                 name="mdmBatch"
                 value={formData.mdmBatch}
                 onChange={handleChange}
-                options={["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4"]}
+                options={["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "None"]}
                 className="w-1/2"
               />
             </div>
